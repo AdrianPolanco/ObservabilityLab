@@ -1,0 +1,12 @@
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\bin\Debug\net10.0\ObservabilityLab.Shared.deps.json
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\bin\Debug\net10.0\ObservabilityLab.Shared.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\bin\Debug\net10.0\ObservabilityLab.Shared.pdb
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.csproj.AssemblyReference.cache
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.AssemblyInfoInputs.cache
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.AssemblyInfo.cs
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.csproj.CoreCompileInputs.cache
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\refint\ObservabilityLab.Shared.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.pdb
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ref\ObservabilityLab.Shared.dll

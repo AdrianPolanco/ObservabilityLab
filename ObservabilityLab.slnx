@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="ObservabilityLab.Api/ObservabilityLab.Api.csproj" />
+  <Project Path="ObservabilityLab.EmailWorker/ObservabilityLab.EmailWorker.csproj" />
+  <Project Path="ObservabilityLab.InvoiceWorker/ObservabilityLab.InvoiceWorker.csproj" />
+  <Project Path="ObservabilityLab.OrderProcessingWorker/ObservabilityLab.OrderProcessingWorker.csproj" />
+  <Project Path="ObservabilityLab.Shared/ObservabilityLab.Shared.csproj" />
+</Solution>
