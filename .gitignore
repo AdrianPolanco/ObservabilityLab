@@ -1,0 +1,46 @@
+# Visual Studio and IDE
+.vs/
+.vscode/
+*.user
+*.sln.iml
+*.suo
+*.DotSettings.user
+.idea/
+
+# Build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.nupkg
+*.snupkg
+*.baml
+
+# NuGet
+.nuget/
+packages/
+.nupkg
+
+# Local environment and configuration
+appsettings.json
+appsettings.*.json
+!appsettings.template.json
+!appsettings.*.template.json
+log4net.config
+!log4net.template.config
+.env
+.env.local
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+.directory
+
+# Build output
+PublishProfiles/
+publish/
