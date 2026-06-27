@@ -10,6 +10,9 @@ builder.Services.AddSharedDatabase(builder.Configuration);
 
 var app = builder.Build();
 
+// Seed database on startup if empty
+await app.Services.SeedDatabaseAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
