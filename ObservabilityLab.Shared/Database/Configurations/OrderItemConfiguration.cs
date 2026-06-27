@@ -25,6 +25,11 @@ namespace ObservabilityLab.Shared.Database.Configurations
                 .IsRequired()
                 .HasColumnName("quantity");
 
+            builder.Property(oi => oi.UnitPrice)
+                .IsRequired()
+                .HasColumnName("unit_price")
+                .HasColumnType("decimal(18,2)");
+
             builder.HasOne<Product>()
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId)

@@ -28,6 +28,15 @@ namespace ObservabilityLab.Shared.Database.Configurations
                 .HasForeignKey("OrderId")
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Property(o => o.CreatedAt)
+                .IsRequired()
+                .HasColumnName("created_at");
+
+            builder.Property(o => o.TotalAmount)
+                .IsRequired()
+                .HasColumnName("total_amount")
+                .HasColumnType("decimal(18,2)");
+
             builder.HasOne<Invoice>()
                 .WithOne()
                 .HasForeignKey<Invoice>(i => i.OrderId);

@@ -21,6 +21,7 @@ namespace ObservabilityLab.Shared.Database.Configurations
                 .IsUnique();
 
             builder.Property(i => i.FilePath)
+                .HasColumnName("file_path")
                 .IsRequired();
 
             builder.Property(i => i.CreatedAt)
