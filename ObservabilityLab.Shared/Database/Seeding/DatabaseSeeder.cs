@@ -14,14 +14,16 @@ public class DatabaseSeeder
 
     public async Task SeedAsync(CancellationToken cancellationToken = default)
     {
-        if (await _context.Customers.AnyAsync<Customer>(cancellationToken) || await _context.Products.AnyAsync<Product>(cancellationToken))
+        if (!await _context.Customers.AnyAsync(cancellationToken))
         {
-            return;
+            await SeedCustomersAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        await SeedCustomersAsync(cancellationToken);
-        await SeedProductsAsync(cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        if (!await _context.Products.AnyAsync(cancellationToken))
+        {
+            await SeedProductsAsync(cancellationToken);
+        }
     }
 
     private async Task SeedCustomersAsync(CancellationToken cancellationToken)
@@ -76,11 +78,16 @@ public class DatabaseSeeder
                 var name = variant > 0 ? $"{baseName} - Variant {variant + 1}" : baseName;
                 var price = (decimal)(9.99 + (j % 890)) + ((j % 100) * 0.01m);
 
+                bool isInStock = j % 5 != 0;
+                int stockQuantity = isInStock ? 10 + (j % 100) : 0;
+
                 products.Add(new Product
                 {
                     Id = Guid.NewGuid(),
                     Name = name,
-                    Price = Math.Round(price, 2)
+                    Price = Math.Round(price, 2),
+                    StockQuantity = stockQuantity,
+                    IsInStock = isInStock
                 });
             }
 
