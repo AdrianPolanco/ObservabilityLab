@@ -95,6 +95,7 @@ namespace ObservabilityLab.Api.Features.Orders
                               p => p.Id,
                               (i, p) => new OrderItemDto(p.Id, p.Name, i.UnitPrice, i.Quantity))
                         .ToList(),
+                    o.TotalAmount,
                     dbContext.Invoices.FirstOrDefault(inv => inv.OrderId == o.Id)))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cancellationToken);

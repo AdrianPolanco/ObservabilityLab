@@ -107,6 +107,8 @@ namespace ObservabilityLab.Shared.Entities
 
             CalculateTotalAmount();
 
+            Status = OrderStatus.Processed;
+
             return Result<Order>.Success(this);
         }
 

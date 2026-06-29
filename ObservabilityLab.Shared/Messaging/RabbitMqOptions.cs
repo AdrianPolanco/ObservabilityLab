@@ -20,4 +20,11 @@ public sealed class RabbitMqOptions
     /// Overridable per service via the "RabbitMq" section in appsettings.json.
     /// </summary>
     public int MaxChannels { get; init; } = 10;
+
+    /// <summary>
+    /// Number of messages the broker delivers to a consumer before requiring an ACK
+    /// (BasicQos prefetch count). Defaults to 10. Applied per consumer channel.
+    /// Overridable per service via the "RabbitMq" section in appsettings.json.
+    /// </summary>
+    public ushort PrefetchCount { get; init; } = 10;
 }

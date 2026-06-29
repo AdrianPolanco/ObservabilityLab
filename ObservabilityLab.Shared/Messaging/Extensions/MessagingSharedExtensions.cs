@@ -105,6 +105,32 @@ public static class MessagingSharedExtensions
         logger.LogInformation("RabbitMQ topology bootstrap complete.");
     }
 
+    /// <summary>
+    /// Registers a <see cref="RabbitMqConsumer{TMessage}"/> as a hosted service together with
+    /// its <typeparamref name="THandler"/> and the queue name it should consume from.
+    /// <para>
+    /// Call this after <see cref="AddSharedMessaging"/> in each startup project's
+    /// <c>Program.cs</c>:
+    /// <code>
+    /// builder.Services.AddRabbitMqConsumer&lt;OrderCreated, OrderCreatedHandler&gt;(
+    ///     RabbitMqTopology.Queues.OrderProcessingWorker);
+    /// </code>
+    /// </para>
+    /// The handler is resolved from a per-message DI scope so it may safely depend on scoped
+    /// services (e.g. <c>ApplicationDbContext</c>).
+    /// </summary>
+    public static IServiceCollection AddRabbitMqConsumer<TMessage, THandler>(
+        this IServiceCollection services,
+        string queueName)
+        where TMessage : class
+        where THandler : class, IMessageHandler<TMessage>
+    {
+        services.AddSingleton(new ConsumerOptions<TMessage> { QueueName = queueName });
+        services.AddScoped<IMessageHandler<TMessage>, THandler>();
+        services.AddHostedService<RabbitMqConsumer<TMessage>>();
+        return services;
+    }
+
     /// <summary>Marker type used only to scope the topology-bootstrap logger.</summary>
     private sealed class RabbitMqTopologyBootstrapper;
 }

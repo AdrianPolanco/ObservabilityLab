@@ -144,7 +144,8 @@
         "required": [
           "orderId",
           "status",
-          "items"
+          "items",
+          "totalAmount"
         ],
         "type": "object",
         "properties": {
@@ -160,6 +161,14 @@
             "items": {
               "$ref": "#/components/schemas/OrderItemDto"
             }
+          },
+          "totalAmount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
           },
           "invoice": {
             "oneOf": [
