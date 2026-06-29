@@ -1,4 +1,5 @@
 using ObservabilityLab.Api.Features.Orders.Create;
+using ObservabilityLab.Api.Features.Orders.Get;
 
 namespace ObservabilityLab.Api.Features.Orders;
 
@@ -9,7 +10,7 @@ internal static class OrderEndpoints
         var group = app.MapGroup("/orders").WithTags("Orders");
 
         CreateOrder.MapEndpoint(group);
-        // GetOrderById.MapEndpoint(group);
+        GetOrder.MapEndpoint(group);
         // ListOrders.MapEndpoint(group);
         // AddOrderItem.MapEndpoint(group);
 

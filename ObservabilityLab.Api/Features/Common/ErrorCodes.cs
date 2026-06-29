@@ -5,6 +5,7 @@ internal static class ErrorCodes
     // ── Not-found codes (→ 404) ───────────────────────────────────────────────
     internal const string CustomerDoesNotExist = "CustomerDoesNotExist";
     internal const string ProductDoesNotExist  = "ProductDoesNotExist";
+    internal const string OrderDoesNotExist = "OrderDoesNotExist";
 
     // ── Domain validation codes (→ 400) ──────────────────────────────────────
     internal const string InvalidCustomerId        = "InvalidCustomerId";
@@ -19,5 +20,6 @@ internal static class ErrorCodes
     [
         CustomerDoesNotExist,
         ProductDoesNotExist,
+        OrderDoesNotExist
     ];
 }

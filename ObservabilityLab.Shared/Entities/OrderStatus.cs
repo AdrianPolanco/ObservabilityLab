@@ -7,6 +7,7 @@ namespace ObservabilityLab.Shared.Entities
         Pending,
         Processing,
         Processed,
+        Invoiced,
         Failed
     }
 }

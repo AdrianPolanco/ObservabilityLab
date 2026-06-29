@@ -15,7 +15,7 @@ internal static class CreateOrder
 
     internal record OrderItemRequest(Guid ProductId, int Quantity);
 
-    internal record CreateOrderRequest(Guid CustomerId, List<OrderItemRequest> Products);
+    internal record CreateOrderRequest(Guid CustomerId, List<OrderItemRequest> Items);
 
     internal record CreateOrderResponse(Guid OrderId);
 
@@ -37,7 +37,7 @@ internal static class CreateOrder
         OrderService orderService,
         CancellationToken ct)
     {
-        var lines = request.Products.Select(p => (p.ProductId, p.Quantity)).ToList();
+        var lines = request.Items.Select(p => (p.ProductId, p.Quantity)).ToList();
         var result = await orderService.CreateAsync(request.CustomerId, lines, ct);
         return result.ToHttpResult(order =>
             TypedResults.Created($"/orders/{order.Id}", ToResponse(order)));

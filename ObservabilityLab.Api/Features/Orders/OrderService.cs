@@ -3,10 +3,11 @@ using ObservabilityLab.Api.Features.Common;
 using ObservabilityLab.Shared.Database;
 using ObservabilityLab.Shared.Entities;
 using ObservabilityLab.Shared.Results;
+using static ObservabilityLab.Api.Features.Orders.Get.GetOrder;
 
 namespace ObservabilityLab.Api.Features.Orders
 {
-    public class OrderService(ApplicationDbContext dbContext)
+    internal class OrderService(ApplicationDbContext dbContext)
     {
         public async Task<Result<Order>> CreateAsync(Guid customerId, List<(Guid productId, int quantity)> products, CancellationToken cancellationToken)
         {
@@ -22,6 +23,8 @@ namespace ObservabilityLab.Api.Features.Orders
             }
 
             var productIds = products.Select(p => p.productId).Distinct().ToList();
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             var foundProducts = await dbContext.Products
                 .Where(p => productIds.Contains(p.Id))
@@ -59,10 +62,40 @@ namespace ObservabilityLab.Api.Features.Orders
             if (errors.Count != 0)
                 return Result<Order>.Failure(errors); // DbContext is request-scoped; in-memory mutations are discarded
 
+            cancellationToken.ThrowIfCancellationRequested();
             dbContext.Orders.Add(order);
+            cancellationToken.ThrowIfCancellationRequested();
             await dbContext.SaveChangesAsync(cancellationToken); // one transaction: product UPDATEs + order INSERT + order_item INSERTs
 
             return Result<Order>.Success(order);
+        }
+
+        public async Task<Result<OrderDto>> GetOrderAsync(Guid orderId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Single round trip: order + items joined to product names + invoice (left-join via correlated subquery).
+            // AsNoTracking because this is a pure read — no change tracking overhead needed.
+            var dto = await dbContext.Orders
+                .Where(o => o.Id == orderId)
+                .Select(o => new OrderDto(
+                    o.Id,
+                    o.Status,
+                    o.Items
+                        .Join(dbContext.Products,
+                              i => i.ProductId,
+                              p => p.Id,
+                              (i, p) => new OrderItemDto(p.Id, p.Name, i.UnitPrice, i.Quantity))
+                        .ToList(),
+                    dbContext.Invoices.FirstOrDefault(inv => inv.OrderId == o.Id)))
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (dto is null)
+                return Result<OrderDto>.Failure(
+                    new Error(ErrorCodes.OrderDoesNotExist, $"The order with id {orderId} does not exist."));
+
+            return Result<OrderDto>.Success(dto);
         }
     }
 }
