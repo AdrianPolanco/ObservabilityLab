@@ -41,5 +41,41 @@
     ],
     "EndpointName": "CreateOrder",
     "Summary": "Creates a new pending order for the given customer."
+  },
+  {
+    "ContainingType": "ObservabilityLab.Api.Features.Orders.Get.GetOrder",
+    "Method": "Handle",
+    "RelativePath": "orders/{orderId}",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ObservabilityLab.Api.Features.Orders.Get.GetOrder\u002BGetOrderResponse",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/problem\u002Bjson"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Orders"
+    ],
+    "EndpointName": "GetOrder",
+    "Summary": "Gets an order details, including its id, status, items and invoice (if it\u0027s already issued)."
   }
 ]

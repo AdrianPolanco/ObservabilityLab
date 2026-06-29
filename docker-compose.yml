@@ -20,8 +20,28 @@ services:
     networks:
       - observability-lab-network
 
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: observability-lab-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: observability
+      RABBITMQ_DEFAULT_PASS: observability
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - observability-lab-network
+
 volumes:
   postgres_data:
+  rabbitmq_data:
 
 networks:
   observability-lab-network:

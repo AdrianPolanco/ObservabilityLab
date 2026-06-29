@@ -140,3 +140,5 @@ C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Order
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.OrderProcessingWorker\obj\Debug\net10.0\ObservabilityLab.OrderProcessingWorker.genruntimeconfig.cache
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.OrderProcessingWorker\obj\Debug\net10.0\ref\ObservabilityLab.OrderProcessingWorker.dll
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.OrderProcessingWorker\obj\Debug\net10.0\ObservabilityLab.OrderProcessingWorker.sourcelink.json
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.OrderProcessingWorker\bin\Debug\net10.0\RabbitMQ.Client.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.OrderProcessingWorker\bin\Debug\net10.0\System.Threading.RateLimiting.dll

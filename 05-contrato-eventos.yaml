@@ -1,0 +1,260 @@
+asyncapi: 3.0.0
+info:
+  title: Observability Lab - Order Pipeline Events
+  version: "1.0.0"
+  description: >
+    Contrato de los eventos asincronos del pipeline de procesamiento de
+    ordenes. Los cuatro eventos viajan por un unico exchange topic en
+    RabbitMQ y propagan el contexto de traza distribuida (W3C Trace Context)
+    en el header traceparent del mensaje AMQP. Esto es lo que permite ver una
+    sola traza en Jaeger desde POST /orders hasta el correo enviado.
+
+    Nota de evolucion (v1.0.0): este contrato cubre el flujo feliz (Fase 1
+    del backlog). Los reintentos y la Dead Letter Queue (HU-19 a HU-21,
+    Fase 2) se agregaran en una version 1.1.0 con un header adicional
+    x-retry-count y un canal orders.dead-letter sobre el exchange
+    orders.events.dlx. No se modelan en esta version para no documentar algo
+    que todavia no existe en el sistema.
+
+servers:
+  local:
+    host: localhost:5672
+    protocol: amqp
+    description: RabbitMQ local (docker-compose)
+
+defaultContentType: application/json
+
+channels:
+  orderCreated:
+    address: order.created
+    description: >
+      Se publica cuando la API persiste una nueva orden con estado Pending
+      (HU-06). Consumido por el Order Processing Worker (HU-07) a traves de
+      la cola order-processing-worker.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: orders.events
+          type: topic
+          durable: true
+    messages:
+      OrderCreated:
+        $ref: "#/components/messages/OrderCreatedMessage"
+
+  orderProcessed:
+    address: order.processed
+    description: >
+      Se publica cuando el Order Processing Worker calcula el total y marca
+      la orden como Processed (HU-07). Consumido por el Invoice Worker
+      (HU-08) a traves de la cola invoice-worker.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: orders.events
+          type: topic
+          durable: true
+    messages:
+      OrderProcessed:
+        $ref: "#/components/messages/OrderProcessedMessage"
+
+  invoiceGenerated:
+    address: invoice.generated
+    description: >
+      Se publica cuando el Invoice Worker genera el PDF de la factura
+      (HU-09). Consumido por el Email Worker (HU-10) a traves de la cola
+      email-worker.
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: orders.events
+          type: topic
+          durable: true
+    messages:
+      InvoiceGenerated:
+        $ref: "#/components/messages/InvoiceGeneratedMessage"
+
+  emailSent:
+    address: email.sent
+    description: >
+      Se publica cuando el Email Worker confirma el envio del correo con la
+      factura adjunta (HU-12). Cierra el pipeline; actualmente no tiene
+      consumidores, pero se publica para permitir metricas de cierre del
+      ciclo completo y futuras integraciones (ej. notificaciones push).
+    bindings:
+      amqp:
+        is: routingKey
+        exchange:
+          name: orders.events
+          type: topic
+          durable: true
+    messages:
+      EmailSent:
+        $ref: "#/components/messages/EmailSentMessage"
+
+operations:
+  publishOrderCreated:
+    action: send
+    summary: La API publica OrderCreated al persistir una orden nueva
+    channel:
+      $ref: "#/channels/orderCreated"
+    messages:
+      - $ref: "#/channels/orderCreated/messages/OrderCreated"
+
+  consumeOrderCreated:
+    action: receive
+    summary: >
+      El Order Processing Worker consume OrderCreated desde la cola
+      order-processing-worker
+    channel:
+      $ref: "#/channels/orderCreated"
+    messages:
+      - $ref: "#/channels/orderCreated/messages/OrderCreated"
+
+  publishOrderProcessed:
+    action: send
+    summary: El Order Processing Worker publica OrderProcessed
+    channel:
+      $ref: "#/channels/orderProcessed"
+    messages:
+      - $ref: "#/channels/orderProcessed/messages/OrderProcessed"
+
+  consumeOrderProcessed:
+    action: receive
+    summary: El Invoice Worker consume OrderProcessed desde la cola invoice-worker
+    channel:
+      $ref: "#/channels/orderProcessed"
+    messages:
+      - $ref: "#/channels/orderProcessed/messages/OrderProcessed"
+
+  publishInvoiceGenerated:
+    action: send
+    summary: El Invoice Worker publica InvoiceGenerated
+    channel:
+      $ref: "#/channels/invoiceGenerated"
+    messages:
+      - $ref: "#/channels/invoiceGenerated/messages/InvoiceGenerated"
+
+  consumeInvoiceGenerated:
+    action: receive
+    summary: El Email Worker consume InvoiceGenerated desde la cola email-worker
+    channel:
+      $ref: "#/channels/invoiceGenerated"
+    messages:
+      - $ref: "#/channels/invoiceGenerated/messages/InvoiceGenerated"
+
+  publishEmailSent:
+    action: send
+    summary: El Email Worker publica EmailSent al confirmar el envio del correo
+    channel:
+      $ref: "#/channels/emailSent"
+    messages:
+      - $ref: "#/channels/emailSent/messages/EmailSent"
+
+components:
+  messages:
+    OrderCreatedMessage:
+      name: OrderCreated
+      title: Orden creada
+      summary: Una orden nueva fue persistida y esta lista para ser procesada.
+      headers:
+        $ref: "#/components/schemas/TraceHeaders"
+      payload:
+        $ref: "#/components/schemas/OrderCreatedPayload"
+
+    OrderProcessedMessage:
+      name: OrderProcessed
+      title: Orden procesada
+      summary: El total de la orden fue calculado y su estado paso a Processed.
+      headers:
+        $ref: "#/components/schemas/TraceHeaders"
+      payload:
+        $ref: "#/components/schemas/OrderProcessedPayload"
+
+    InvoiceGeneratedMessage:
+      name: InvoiceGenerated
+      title: Factura generada
+      summary: El PDF de la factura fue generado y registrado.
+      headers:
+        $ref: "#/components/schemas/TraceHeaders"
+      payload:
+        $ref: "#/components/schemas/InvoiceGeneratedPayload"
+
+    EmailSentMessage:
+      name: EmailSent
+      title: Correo enviado
+      summary: El correo con la factura adjunta fue enviado al cliente.
+      headers:
+        $ref: "#/components/schemas/TraceHeaders"
+      payload:
+        $ref: "#/components/schemas/EmailSentPayload"
+
+  schemas:
+    TraceHeaders:
+      type: object
+      properties:
+        traceparent:
+          type: string
+          description: >
+            Contexto de traza W3C (https://www.w3.org/TR/trace-context/)
+            inyectado por quien publica y extraido por quien consume, para
+            mantener una unica traza distribuida visible en Jaeger a traves
+            de los 4 procesos.
+          example: "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+        content-type:
+          type: string
+          const: application/json
+
+    OrderCreatedPayload:
+      type: object
+      required: [orderId, customerId, createdAt]
+      properties:
+        orderId:
+          type: integer
+        customerId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderProcessedPayload:
+      type: object
+      required: [orderId, totalAmount, processedAt]
+      properties:
+        orderId:
+          type: integer
+        totalAmount:
+          type: number
+          format: double
+        processedAt:
+          type: string
+          format: date-time
+
+    InvoiceGeneratedPayload:
+      type: object
+      required: [invoiceId, orderId, filePath, generatedAt]
+      properties:
+        invoiceId:
+          type: integer
+        orderId:
+          type: integer
+        filePath:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+
+    EmailSentPayload:
+      type: object
+      required: [orderId, email, sentAt]
+      properties:
+        orderId:
+          type: integer
+        email:
+          type: string
+          format: email
+        sentAt:
+          type: string
+          format: date-time

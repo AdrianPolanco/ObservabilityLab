@@ -140,3 +140,5 @@ C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Email
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.EmailWorker\obj\Debug\net10.0\ObservabilityLab.EmailWorker.genruntimeconfig.cache
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.EmailWorker\obj\Debug\net10.0\ref\ObservabilityLab.EmailWorker.dll
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.EmailWorker\obj\Debug\net10.0\ObservabilityLab.EmailWorker.sourcelink.json
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.EmailWorker\bin\Debug\net10.0\RabbitMQ.Client.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.EmailWorker\bin\Debug\net10.0\System.Threading.RateLimiting.dll

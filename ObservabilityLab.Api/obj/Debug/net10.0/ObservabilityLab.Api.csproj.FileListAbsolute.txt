@@ -124,3 +124,4 @@ C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Api\o
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Api\obj\Debug\net10.0\ref\ObservabilityLab.Api.dll
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Api\obj\Debug\net10.0\ObservabilityLab.Api.sourcelink.json
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Api\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Api\bin\Debug\net10.0\RabbitMQ.Client.dll

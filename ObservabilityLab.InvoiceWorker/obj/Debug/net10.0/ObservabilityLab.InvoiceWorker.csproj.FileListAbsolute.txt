@@ -140,3 +140,5 @@ C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Invoi
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.InvoiceWorker\obj\Debug\net10.0\ObservabilityLab.InvoiceWorker.genruntimeconfig.cache
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.InvoiceWorker\obj\Debug\net10.0\ref\ObservabilityLab.InvoiceWorker.dll
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.InvoiceWorker\obj\Debug\net10.0\ObservabilityLab.InvoiceWorker.sourcelink.json
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.InvoiceWorker\bin\Debug\net10.0\RabbitMQ.Client.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.InvoiceWorker\bin\Debug\net10.0\System.Threading.RateLimiting.dll
