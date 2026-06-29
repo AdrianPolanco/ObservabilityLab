@@ -10,3 +10,4 @@ C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Share
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\refint\ObservabilityLab.Shared.dll
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.pdb
 C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ref\ObservabilityLab.Shared.dll
+C:\Users\AdriánSaulPolancoFer\dev-tests\ObservabilityLab\ObservabilityLab.Shared\obj\Debug\net10.0\ObservabilityLab.Shared.sourcelink.json

@@ -47,9 +47,11 @@ namespace ObservabilityLab.Shared.Entities
                 errors.Add(new Error("InvalidProduct", "Product must be a valid instance."));
             }
 
-            if(quantity <= 0)
+            var reduceStockResult = product.ReduceStock(quantity);
+
+            if (reduceStockResult.Errors.Any())
             {
-                errors.Add(new Error("InvalidQuantity", "Quantity must be a positive integer."));
+                errors.AddRange(reduceStockResult.Errors);
             }
 
             if (errors.Any())
@@ -57,14 +59,16 @@ namespace ObservabilityLab.Shared.Entities
                 return Result<OrderItem>.Failure(errors);
             }
 
-            var result = OrderItem.Create(this, product!, quantity);
+            var createOrderItemResult = OrderItem.Create(this, product!, quantity);
 
-            if (result.IsSuccess)
+            if (createOrderItemResult.Errors.Any())
             {
-                _items.Add(result.Data!);
+                return createOrderItemResult;
             }
-
-            return result;
+                
+            _items.Add(createOrderItemResult.Data!);
+            
+            return createOrderItemResult;
         }
 
         public Result<Order> UpdateStatus(OrderStatus newStatus)

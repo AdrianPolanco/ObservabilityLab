@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObservabilityLab.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+266514f40ceca6e13798d54d8af820730dcfb433")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObservabilityLab.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObservabilityLab.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

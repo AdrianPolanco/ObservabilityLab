@@ -4,7 +4,7 @@
     {
         private Result() { }
         public bool IsSuccess => !_errors.Any() && Data is not null;
-        private List<Error> _errors;
+        private List<Error> _errors = [];
         public IReadOnlyList<Error> Errors => _errors.AsReadOnly();
         public T? Data { get; private set; } = default(T?);
 
