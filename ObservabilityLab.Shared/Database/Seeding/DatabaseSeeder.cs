@@ -30,12 +30,12 @@ public class DatabaseSeeder
     {
         var customers = new List<Customer>
         {
-            new() { Id = Guid.NewGuid(), Name = "John Doe", Email = "john.doe@example.com" },
-            new() { Id = Guid.NewGuid(), Name = "Jane Smith", Email = "jane.smith@example.com" },
-            new() { Id = Guid.NewGuid(), Name = "Bob Johnson", Email = "bob.johnson@example.com" },
-            new() { Id = Guid.NewGuid(), Name = "Alice Williams", Email = "alice.williams@example.com" },
-            new() { Id = Guid.NewGuid(), Name = "Charlie Brown", Email = "charlie.brown@example.com" },
-            new() { Id = Guid.NewGuid(), Name = "Adrian Polanco", Email = "adrianhulu0611@gmail.com" }
+            new() { Name = "John Doe", Email = "john.doe@example.com" },
+            new() { Name = "Jane Smith", Email = "jane.smith@example.com" },
+            new() { Name = "Bob Johnson", Email = "bob.johnson@example.com" },
+            new() { Name = "Alice Williams", Email = "alice.williams@example.com" },
+            new() { Name = "Charlie Brown", Email = "charlie.brown@example.com" },
+            new() { Name = "Adrian Polanco", Email = "adrianhulu0611@gmail.com" }
         };
 
         await _context.Customers.AddRangeAsync(customers, cancellationToken);
@@ -83,7 +83,6 @@ public class DatabaseSeeder
 
                 products.Add(new Product
                 {
-                    Id = Guid.NewGuid(),
                     Name = name,
                     Price = Math.Round(price, 2),
                     StockQuantity = stockQuantity,
