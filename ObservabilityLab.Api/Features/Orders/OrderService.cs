@@ -3,6 +3,8 @@ using ObservabilityLab.Api.Features.Common;
 using ObservabilityLab.Shared.Database;
 using ObservabilityLab.Shared.Entities;
 using ObservabilityLab.Shared.Messaging;
+using ObservabilityLab.Shared.Messaging.Constants;
+using ObservabilityLab.Shared.Messaging.Contracts;
 using ObservabilityLab.Shared.Results;
 using static ObservabilityLab.Api.Features.Orders.Get.GetOrder;
 
@@ -67,6 +69,11 @@ namespace ObservabilityLab.Api.Features.Orders
             dbContext.Orders.Add(order);
             cancellationToken.ThrowIfCancellationRequested();
             await dbContext.SaveChangesAsync(cancellationToken); // one transaction: product UPDATEs + order INSERT + order_item INSERTs
+            await publisher.PublishAsync(
+                MessagingConstants.Exchanges.OrderEvents,
+                MessagingConstants.RoutingKeys.OrderCreated,
+                new OrderCreated(order.Id, order.CustomerId, DateTime.UtcNow),
+                cancellationToken);
 
             return Result<Order>.Success(order);
         }

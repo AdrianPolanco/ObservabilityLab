@@ -14,12 +14,26 @@ internal sealed class ApplicationExceptionHandler(ILogger<ApplicationExceptionHa
         logger.LogError(exception, "Unhandled exception for {Method} {Path}",
             httpContext.Request.Method, httpContext.Request.Path);
 
-        var problem = new ProblemDetails
+        ProblemDetails problem;
+
+        if(exception is OperationCanceledException)
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title  = "An unexpected error occurred.",
-            Type   = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
-        };
+            problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status499ClientClosedRequest,
+                Title = "The operation was cancelled",
+                Type = "https://tools.ietf.org/html/rfc9110#section-15.6.1"
+            };
+        }
+        else
+        {
+            problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Title  = "An unexpected error occurred.",
+                Type   = "https://tools.ietf.org/html/rfc9110#section-15.6.1"
+            };
+        }
 
         httpContext.Response.StatusCode = problem.Status!.Value;
         await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);

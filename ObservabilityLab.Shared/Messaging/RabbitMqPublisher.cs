@@ -1,11 +1,12 @@
 ﻿
 
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using System.Text.Json;
 
 namespace ObservabilityLab.Shared.Messaging
 {
-    public class RabbitMqPublisher(RabbitMqChannelPool channelPool)
+    public class RabbitMqPublisher(RabbitMqChannelPool channelPool, ILogger<RabbitMqPublisher> logger)
     {
         public async Task<bool> PublishAsync<T>(string exchange, string routingKey, T message, CancellationToken cancellationToken)
         {
@@ -28,6 +29,15 @@ namespace ObservabilityLab.Shared.Messaging
             };
 
             await channelLease.Channel.BasicPublishAsync(exchange, routingKey, true, basicProps, json, cancellationToken);
+
+            logger.LogInformation("{@MessagePublishedData}",
+                new { Details = "Message published successfully.", 
+                    Exchange = exchange, 
+                    RoutingKey = routingKey,
+                    basicProps.MessageId, 
+                    basicProps.ContentType,
+                    basicProps.Timestamp
+                });
 
             return true;
         }
