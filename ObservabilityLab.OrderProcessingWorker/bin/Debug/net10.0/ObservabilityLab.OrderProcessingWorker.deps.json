@@ -922,6 +922,7 @@
       },
       "ObservabilityLab.Shared/1.0.0": {
         "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "10.0.5",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.9",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.2",
           "RabbitMQ.Client": "7.2.1"

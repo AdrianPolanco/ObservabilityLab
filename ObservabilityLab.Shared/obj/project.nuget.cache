@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+AQPBamOVKo=",
+  "dgSpecHash": "pSEskJ13g3c=",
   "success": true,
   "projectFilePath": "C:\\Users\\AdriánSaulPolancoFer\\dev-tests\\ObservabilityLab\\ObservabilityLab.Shared\\ObservabilityLab.Shared.csproj",
   "expectedPackageFiles": [
@@ -15,8 +15,11 @@
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.configuration.binder\\10.0.9\\microsoft.extensions.configuration.binder.10.0.9.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\10.0.4\\microsoft.extensions.dependencyinjection.10.0.4.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.9\\microsoft.extensions.dependencyinjection.abstractions.10.0.9.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.diagnostics.abstractions\\10.0.5\\microsoft.extensions.diagnostics.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\10.0.5\\microsoft.extensions.fileproviders.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\10.0.5\\microsoft.extensions.hosting.abstractions.10.0.5.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.logging\\10.0.4\\microsoft.extensions.logging.10.0.4.nupkg.sha512",
-    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.4\\microsoft.extensions.logging.abstractions.10.0.4.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.5\\microsoft.extensions.logging.abstractions.10.0.5.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.options\\10.0.9\\microsoft.extensions.options.10.0.9.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.9\\microsoft.extensions.options.configurationextensions.10.0.9.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.9\\microsoft.extensions.primitives.10.0.9.nupkg.sha512",

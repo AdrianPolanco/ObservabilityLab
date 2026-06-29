@@ -13,4 +13,11 @@ public sealed class RabbitMqOptions
     public string UserName { get; init; } = "guest";
     public string Password { get; init; } = "guest";
     public string VirtualHost { get; init; } = "/";
+
+    /// <summary>
+    /// Maximum number of pooled <see cref="RabbitMQ.Client.IChannel"/> instances held by
+    /// <see cref="RabbitMqChannelPool"/>. Defaults to 10; must be at least 1.
+    /// Overridable per service via the "RabbitMq" section in appsettings.json.
+    /// </summary>
+    public int MaxChannels { get; init; } = 10;
 }

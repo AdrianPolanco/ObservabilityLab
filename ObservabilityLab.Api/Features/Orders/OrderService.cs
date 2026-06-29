@@ -2,12 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using ObservabilityLab.Api.Features.Common;
 using ObservabilityLab.Shared.Database;
 using ObservabilityLab.Shared.Entities;
+using ObservabilityLab.Shared.Messaging;
 using ObservabilityLab.Shared.Results;
 using static ObservabilityLab.Api.Features.Orders.Get.GetOrder;
 
 namespace ObservabilityLab.Api.Features.Orders
 {
-    internal class OrderService(ApplicationDbContext dbContext)
+    internal class OrderService(ApplicationDbContext dbContext, RabbitMqPublisher publisher)
     {
         public async Task<Result<Order>> CreateAsync(Guid customerId, List<(Guid productId, int quantity)> products, CancellationToken cancellationToken)
         {
