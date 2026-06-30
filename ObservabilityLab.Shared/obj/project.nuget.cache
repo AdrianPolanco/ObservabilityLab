@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "pSEskJ13g3c=",
+  "dgSpecHash": "U8dFHCVDfqQ=",
   "success": true,
   "projectFilePath": "C:\\Users\\AdriánSaulPolancoFer\\dev-tests\\ObservabilityLab\\ObservabilityLab.Shared\\ObservabilityLab.Shared.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\communitytoolkit.highperformance\\8.4.0\\communitytoolkit.highperformance.8.4.0.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.entityframeworkcore\\10.0.4\\microsoft.entityframeworkcore.10.0.4.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\10.0.4\\microsoft.entityframeworkcore.abstractions.10.0.4.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\10.0.4\\microsoft.entityframeworkcore.analyzers.10.0.4.nupkg.sha512",
@@ -23,9 +24,12 @@
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.options\\10.0.9\\microsoft.extensions.options.10.0.9.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.9\\microsoft.extensions.options.configurationextensions.10.0.9.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.9\\microsoft.extensions.primitives.10.0.9.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\minio\\6.0.5\\minio.6.0.5.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\npgsql\\10.0.3\\npgsql.10.0.3.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\10.0.2\\npgsql.entityframeworkcore.postgresql.10.0.2.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\rabbitmq.client\\7.2.1\\rabbitmq.client.7.2.1.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.io.hashing\\9.0.4\\system.io.hashing.9.0.4.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.reactive\\6.0.1\\system.reactive.6.0.1.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.threading.ratelimiting\\8.0.0\\system.threading.ratelimiting.8.0.0.nupkg.sha512"
   ],
   "logs": []

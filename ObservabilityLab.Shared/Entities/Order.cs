@@ -24,7 +24,7 @@ namespace ObservabilityLab.Shared.Entities
 
             if (errors.Any())
             {
-                return Result<Order>.Failure(errors);
+                return Result<Order>.Failures(errors);
             }
 
             var order = new Order
@@ -56,7 +56,7 @@ namespace ObservabilityLab.Shared.Entities
 
             if (errors.Any())
             {
-                return Result<OrderItem>.Failure(errors);
+                return Result<OrderItem>.Failures(errors);
             }
 
             var createOrderItemResult = OrderItem.Create(this, product!, quantity);
@@ -82,7 +82,7 @@ namespace ObservabilityLab.Shared.Entities
 
             if (errors.Any())
             {
-                return Result<Order>.Failure(errors);
+                return Result<Order>.Failures(errors);
             }
 
             Status = newStatus;
@@ -100,7 +100,7 @@ namespace ObservabilityLab.Shared.Entities
 
             if (errors.Any())
             {
-                return Result<Order>.Failure(errors);
+                return Result<Order>.Failures(errors);
             }
 
             Status = OrderStatus.Processing;

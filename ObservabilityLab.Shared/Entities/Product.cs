@@ -30,7 +30,7 @@ namespace ObservabilityLab.Shared.Entities
             }
 
             if(errors.Any()) {
-                return Result<Product>.Failure(errors);
+                return Result<Product>.Failures(errors);
             }
 
             var isInStock = stockQuantity == 0 ? false : true;
@@ -54,7 +54,7 @@ namespace ObservabilityLab.Shared.Entities
             }
 
             if(errors.Any()) {
-                return Result<Product>.Failure(errors);
+                return Result<Product>.Failures(errors);
             }
 
             StockQuantity -= requestedQuantity;

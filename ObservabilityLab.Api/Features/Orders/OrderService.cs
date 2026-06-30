@@ -22,7 +22,7 @@ namespace ObservabilityLab.Api.Features.Orders
             if (!doesCustomerExist)
             {
                 errors.Add(new(ErrorCodes.CustomerDoesNotExist, $"The customer with id {customerId} does not exist."));
-                return Result<Order>.Failure(errors);
+                return Result<Order>.Failures(errors);
             }
 
             var productIds = products.Select(p => p.productId).Distinct().ToList();
@@ -41,7 +41,7 @@ namespace ObservabilityLab.Api.Features.Orders
             }
 
             if (errors.Count != 0)
-                return Result<Order>.Failure(errors);
+                return Result<Order>.Failures(errors);
 
             var orderLines = products
                 .Select(p => (Product: foundProducts[p.productId], p.quantity))
@@ -63,7 +63,7 @@ namespace ObservabilityLab.Api.Features.Orders
             }
 
             if (errors.Count != 0)
-                return Result<Order>.Failure(errors); // DbContext is request-scoped; in-memory mutations are discarded
+                return Result<Order>.Failures(errors); // DbContext is request-scoped; in-memory mutations are discarded
 
             cancellationToken.ThrowIfCancellationRequested();
             dbContext.Orders.Add(order);

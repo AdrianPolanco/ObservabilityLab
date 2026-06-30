@@ -21,6 +21,11 @@ namespace ObservabilityLab.Shared.Entities
                 return Result<Invoice>.Failure(new Error("InvalidOrderId", "Order ID cannot be empty."));
             }
 
+            if(order.Status != OrderStatus.Processed)
+            {
+                return Result<Invoice>.Failure(new Error("OrderNotProcessed", $"The order {order.Id} has not been processed yet: An invoice cannot be issued."));
+            }
+
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 return Result<Invoice>.Failure(new Error("InvalidFilePath", "File path cannot be null or empty."));

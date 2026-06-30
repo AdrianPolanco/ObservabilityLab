@@ -8,6 +8,7 @@ namespace ObservabilityLab.Shared.Messaging.Constants
         {
             public const string OrderCreated = "order.created";
             public const string OrderProcessed = "order.processed";
+            public const string InvoiceGenerated = "invoice.generated";
         }
 
         public static class Exchanges

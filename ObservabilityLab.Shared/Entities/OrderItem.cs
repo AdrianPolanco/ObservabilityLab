@@ -47,7 +47,7 @@ namespace ObservabilityLab.Shared.Entities
 
             if (errors.Any())
             {
-                return Result<OrderItem>.Failure(errors);
+                return Result<OrderItem>.Failures(errors);
             }
 
             var orderItem = new OrderItem

@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObservabilityLab.OrderProcessingWorker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f2e381778a1966e85cf7e43e596cb71616fe57e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+197b3f33d2c25eb851fd0ac4f5ede16b742e90e5")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObservabilityLab.OrderProcessingWorker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObservabilityLab.OrderProcessingWorker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

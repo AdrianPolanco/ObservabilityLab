@@ -24,7 +24,7 @@
             };
         }
 
-        public static Result<T> Failure(List<Error> errors)
+        public static Result<T> Failures(List<Error> errors)
         {
             return new Result<T>
             {

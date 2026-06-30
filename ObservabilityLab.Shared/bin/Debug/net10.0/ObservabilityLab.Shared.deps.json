@@ -10,11 +10,20 @@
         "dependencies": {
           "Microsoft.Extensions.Hosting.Abstractions": "10.0.5",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.9",
+          "Minio": "6.0.5",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.2",
           "RabbitMQ.Client": "7.2.1"
         },
         "runtime": {
           "ObservabilityLab.Shared.dll": {}
+        }
+      },
+      "CommunityToolkit.HighPerformance/8.4.0": {
+        "runtime": {
+          "lib/net8.0/CommunityToolkit.HighPerformance.dll": {
+            "assemblyVersion": "8.4.0.0",
+            "fileVersion": "8.4.0.1"
+          }
         }
       },
       "Microsoft.EntityFrameworkCore/10.0.4": {
@@ -229,6 +238,21 @@
           }
         }
       },
+      "Minio/6.0.5": {
+        "dependencies": {
+          "CommunityToolkit.HighPerformance": "8.4.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.9",
+          "Microsoft.Extensions.Logging": "10.0.4",
+          "System.IO.Hashing": "9.0.4",
+          "System.Reactive": "6.0.1"
+        },
+        "runtime": {
+          "lib/net8.0/Minio.dll": {
+            "assemblyVersion": "6.0.5.0",
+            "fileVersion": "6.0.5.0"
+          }
+        }
+      },
       "Npgsql/10.0.3": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "10.0.5"
@@ -264,6 +288,22 @@
           }
         }
       },
+      "System.IO.Hashing/9.0.4": {
+        "runtime": {
+          "lib/net9.0/System.IO.Hashing.dll": {
+            "assemblyVersion": "9.0.0.4",
+            "fileVersion": "9.0.425.16305"
+          }
+        }
+      },
+      "System.Reactive/6.0.1": {
+        "runtime": {
+          "lib/net6.0/System.Reactive.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.1.7420"
+          }
+        }
+      },
       "System.Threading.RateLimiting/8.0.0": {
         "runtime": {
           "lib/net8.0/System.Threading.RateLimiting.dll": {
@@ -279,6 +319,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "CommunityToolkit.HighPerformance/8.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-flxspiBs0G/0GMp7IK2J2ijV9bTG6hEwFc/z6ekHqB6nwRJ4Ry2yLdx+TkbCUYFCl4XhABkAwomeKbT6zM2Zlg==",
+      "path": "communitytoolkit.highperformance/8.4.0",
+      "hashPath": "communitytoolkit.highperformance.8.4.0.nupkg.sha512"
     },
     "Microsoft.EntityFrameworkCore/10.0.4": {
       "type": "package",
@@ -406,6 +453,13 @@
       "path": "microsoft.extensions.primitives/10.0.9",
       "hashPath": "microsoft.extensions.primitives.10.0.9.nupkg.sha512"
     },
+    "Minio/6.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AK3JIDZnFZg2Hpkqo6vlzyiEC4OifG+jQbuqpAtXePnIo49G4pNn27THh3DI8s4o84b/MMBQF+n1DEwBNenxsg==",
+      "path": "minio/6.0.5",
+      "hashPath": "minio.6.0.5.nupkg.sha512"
+    },
     "Npgsql/10.0.3": {
       "type": "package",
       "serviceable": true,
@@ -426,6 +480,20 @@
       "sha512": "sha512-YKXEfg9fVQiTKgZlvIhAfPSFaamEgi8DsQmisCH0IAsU4FYLrtoguDrDj6JtJVGUt40QPnBLRH6fTQcAC4qsOg==",
       "path": "rabbitmq.client/7.2.1",
       "hashPath": "rabbitmq.client.7.2.1.nupkg.sha512"
+    },
+    "System.IO.Hashing/9.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WogPvgAFqQORFD8Iyha6RZ+/1QB3dsWRWxbwi8/HHVgiGQ8z0oMWpwe8Kk3Ti+Roe+P6a3sBg+WwBfEsyziZKg==",
+      "path": "system.io.hashing/9.0.4",
+      "hashPath": "system.io.hashing.9.0.4.nupkg.sha512"
+    },
+    "System.Reactive/6.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rHaWtKDwCi9qJ3ObKo8LHPMuuwv33YbmQi7TcUK1C264V3MFnOr5Im7QgCTdLniztP3GJyeiSg5x8NqYJFqRmg==",
+      "path": "system.reactive/6.0.1",
+      "hashPath": "system.reactive.6.0.1.nupkg.sha512"
     },
     "System.Threading.RateLimiting/8.0.0": {
       "type": "package",
