@@ -29,6 +29,8 @@ internal class OrderProcessedMessageHandler(
 {
     public async Task<Result<OrderProcessed>> HandleAsync(OrderProcessed message, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Processing OrderProcessed event for order {OrderId}.", message.OrderId);
+
         // Single round-trip: join orders → customers and project items+products inline.
         // UnitPrice comes from order_items (captured at order time), not from products.current price.
         var invoiceDto = await dbContext.Orders
@@ -52,10 +54,13 @@ internal class OrderProcessedMessageHandler(
             .FirstOrDefaultAsync(cancellationToken);
 
         if (invoiceDto is null)
+        {
+            logger.LogWarning("Order {OrderId} not found while building invoice.", message.OrderId);
             return Result<OrderProcessed>.Failure(
                 new Error("OrderNotFound", $"Order {message.OrderId} not found while building invoice.", new() {
                     { "OrderId", message.OrderId }
                 }));
+        }
 
         var pdfBytes = pdfGenerator.Generate(invoiceDto);
 
@@ -64,11 +69,14 @@ internal class OrderProcessedMessageHandler(
             objectName, pdfBytes, MinIOConstants.Buckets.Invoices, "application/pdf", cancellationToken);
 
         if (!isSuccess)
+        {
+            logger.LogWarning("Failed to upload invoice PDF for order {OrderId} as {ObjectName}.", message.OrderId, objectName);
             return Result<OrderProcessed>.Failure(
                 new Error("InvoiceUploadFailed", $"Failed to upload invoice PDF for order {message.OrderId}.", new() {
                     { "OrderId", message.OrderId },
                     { "ObjectName", objectName }
                 }));
+        }
 
         logger.LogInformation(
             "Uploaded invoice PDF for order {OrderId} as {ObjectName}.",
@@ -78,6 +86,7 @@ internal class OrderProcessedMessageHandler(
 
         if (invoiceResult.Errors.Any())
         {
+            logger.LogWarning("Invoice validation failed for order {OrderId}: {@Errors}", message.OrderId, invoiceResult.Errors);
             return Result<OrderProcessed>.Failures(invoiceResult.Errors.ToList());
         }
 
@@ -95,11 +104,14 @@ internal class OrderProcessedMessageHandler(
 
         if (!published)
         {
+            logger.LogWarning("Failed to publish InvoiceGenerated event for invoice {InvoiceId} (order {OrderId}).", invoice.Id, invoiceDto.Order.Id);
             return Result<OrderProcessed>.Failure(new Error("InvoiceMessageUnpublished", $"The invoice generation for {invoice.Id} could not be published.", new() {
                 { "InvoiceId", invoice.Id },
                 { "OrderId", invoiceDto.Order.Id }
             }));
         }
+
+        logger.LogInformation("Invoice {InvoiceId} generated and InvoiceGenerated event published for order {OrderId}.", invoice.Id, invoiceDto.Order.Id);
 
         return Result<OrderProcessed>.Success(message);
     }

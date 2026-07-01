@@ -22,9 +22,12 @@ namespace ObservabilityLab.EmailWorker.Services
             body.Attachments.Add(fileName, fileBytes);
             email.Body = body.ToMessageBody();
 
-            using(SmtpClient smtpClient = new SmtpClient()) {
+            var options = optionsMonitor.CurrentValue;
+
+            try
+            {
+                using SmtpClient smtpClient = new SmtpClient();
                 smtpClient.CheckCertificateRevocation = false;
-                var options = optionsMonitor.CurrentValue;
                 await smtpClient.ConnectAsync(options.SmtpServer, options.Port, false, cancellationToken);
 
                 if (smtpClient.Capabilities.HasFlag(SmtpCapabilities.Authentication)
@@ -35,6 +38,11 @@ namespace ObservabilityLab.EmailWorker.Services
 
                 await smtpClient.SendAsync(email, cancellationToken);
                 await smtpClient.DisconnectAsync(true, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to send email to {Destination} via {SmtpServer}:{Port}.", to, options.SmtpServer, options.Port);
+                throw;
             }
 
             logger.LogInformation("Email sent successfully to {Destination}", to);

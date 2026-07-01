@@ -1,4 +1,5 @@
 using ObservabilityLab.Shared.Results;
+using Serilog;
 
 namespace ObservabilityLab.Api.Features.Common;
 
@@ -13,12 +14,18 @@ internal static class ResultExtensions
         this Result<T> result,
         Func<T, IResult> onSuccess) where T : class
     {
-        if (result.IsSuccess)
+        var logger = Log.ForContext<T>();
+
+        if (result.IsSuccess){
+            logger.Information("Operation succeeded with result: {@Result}", result);
             return onSuccess(result.Data!);
+        }
 
         var statusCode = result.Errors.Any(e => ErrorCodes.NotFoundCodes.Contains(e.Code))
             ? StatusCodes.Status404NotFound
             : StatusCodes.Status400BadRequest;
+
+        logger.Warning("Operation failed with status code {StatusCode} and errors: {@Errors}", statusCode, result.Errors);
 
         return TypedResults.Problem(
             statusCode: statusCode,

@@ -37,18 +37,21 @@ namespace ObservabilityLab.EmailWorker.Services
 
             if (!sent)
             {
+                logger.LogWarning("Failed to send invoice email for order {OrderId} to {EmailAddress}.", message.OrderId, emailAddress);
                 return Result<InvoiceGenerated>
                     .Failure(new("EmailNotSent", $"The email for the invoice of the order {message.OrderId} could not be sent.", new() {
                         { "OrderId", message.OrderId },
                         { "EmailAddress", emailAddress }
                     }));
             }
-                
+
             var invoice = await dbContext.Invoices.FirstOrDefaultAsync(i => i.Id == message.InvoiceId, cancellationToken);
 
             invoice.MarkEmailAsSent();
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Invoice email sent for order {OrderId}, invoice {InvoiceId}.", message.OrderId, message.InvoiceId);
 
             return Result<InvoiceGenerated>.Success(message);
         }
