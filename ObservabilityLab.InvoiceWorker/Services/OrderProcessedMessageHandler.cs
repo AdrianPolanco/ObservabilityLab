@@ -58,7 +58,7 @@ internal class OrderProcessedMessageHandler(
         var pdfBytes = pdfGenerator.Generate(invoiceDto);
 
         var objectName = $"{message.OrderId}.pdf";
-        var (isSuccess, fileUrl) = await minioService.UploadAsync(
+        var (isSuccess, _) = await minioService.UploadAsync(
             objectName, pdfBytes, MinIOConstants.Buckets.Invoices, "application/pdf", cancellationToken);
 
         if (!isSuccess)
@@ -69,7 +69,7 @@ internal class OrderProcessedMessageHandler(
             "Uploaded invoice PDF for order {OrderId} as {ObjectName}.",
             message.OrderId, objectName);
 
-        var invoiceResult = Invoice.Create(invoiceDto.Order, fileUrl);
+        var invoiceResult = Invoice.Create(invoiceDto.Order, objectName);
 
         if (invoiceResult.Errors.Any())
         {
@@ -79,13 +79,13 @@ internal class OrderProcessedMessageHandler(
         var invoice = invoiceResult.Data;
 
         await dbContext.Invoices.AddAsync(invoice, cancellationToken);
-        await dbContext.Orders.ExecuteUpdateAsync(o => o.SetProperty(o => o.Status, OrderStatus.Invoiced), cancellationToken);
+        await dbContext.Orders.Where(o => o.Id == message.OrderId).ExecuteUpdateAsync(o => o.SetProperty(o => o.Status, OrderStatus.Invoiced), cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var published = await publisher.PublishAsync(
             Exchanges.OrderEvents,
             RoutingKeys.InvoiceGenerated,
-            new InvoiceGenerated(invoice.Id, invoiceDto.Order.Id, fileUrl, DateTime.UtcNow),
+            new InvoiceGenerated(invoice.Id, invoiceDto.Order.Id, objectName, DateTime.UtcNow),
             cancellationToken);
 
         if (!published)
@@ -93,7 +93,6 @@ internal class OrderProcessedMessageHandler(
             return Result<OrderProcessed>.Failure(new Error("InvoiceMessageUnpublished", $"The invoice generation for {invoice.Id} could not be published."));
         }
 
-        // TODO(next): persist Invoice row (FilePath = objectName) + publish invoice.generated
         return Result<OrderProcessed>.Success(message);
     }
 }

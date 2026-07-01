@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "UI0PoeJ0tQ4=",
+  "dgSpecHash": "xTh4hQwW72Y=",
   "success": true,
   "projectFilePath": "C:\\Users\\AdriánSaulPolancoFer\\dev-tests\\ObservabilityLab\\ObservabilityLab.InvoiceWorker\\ObservabilityLab.InvoiceWorker.csproj",
   "expectedPackageFiles": [
@@ -56,6 +56,15 @@
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\10.0.2\\npgsql.entityframeworkcore.postgresql.10.0.2.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\questpdf\\2026.6.1\\questpdf.2026.6.1.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\rabbitmq.client\\7.2.1\\rabbitmq.client.7.2.1.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog\\4.3.0\\serilog.4.3.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.aspnetcore\\10.0.0\\serilog.aspnetcore.10.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.extensions.hosting\\10.0.0\\serilog.extensions.hosting.10.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.extensions.logging\\10.0.0\\serilog.extensions.logging.10.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.formatting.compact\\3.0.0\\serilog.formatting.compact.3.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.settings.configuration\\10.0.0\\serilog.settings.configuration.10.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.sinks.console\\6.1.1\\serilog.sinks.console.6.1.1.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.sinks.debug\\3.0.0\\serilog.sinks.debug.3.0.0.nupkg.sha512",
+    "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\serilog.sinks.file\\7.0.0\\serilog.sinks.file.7.0.0.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.composition\\9.0.0\\system.composition.9.0.0.nupkg.sha512",
     "C:\\Users\\AdriánSaulPolancoFer\\.nuget\\packages\\system.composition.attributedmodel\\9.0.0\\system.composition.attributedmodel.9.0.0.nupkg.sha512",

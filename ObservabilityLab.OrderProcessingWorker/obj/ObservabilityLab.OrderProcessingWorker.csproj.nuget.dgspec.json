@@ -427,6 +427,10 @@
             "RabbitMQ.Client": {
               "target": "Package",
               "version": "[7.*, )"
+            },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[10.0.0, )"
             }
           },
           "imports": [

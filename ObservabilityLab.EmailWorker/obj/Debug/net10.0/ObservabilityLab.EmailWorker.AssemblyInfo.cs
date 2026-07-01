@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ObservabilityLab.EmailWorker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+197b3f33d2c25eb851fd0ac4f5ede16b742e90e5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8089e00dbe474b93b9d2a44d4196d792373fbe43")]
 [assembly: System.Reflection.AssemblyProductAttribute("ObservabilityLab.EmailWorker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ObservabilityLab.EmailWorker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
