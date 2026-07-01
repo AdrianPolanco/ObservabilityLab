@@ -32,7 +32,8 @@
             };
         }
 
-        public void AddError(string code, string message) => _errors.Add(new Error(code, message));
+        public void AddError(string code, string message, Dictionary<string, object>? metadata = null)
+            => _errors.Add(new Error(code, message, metadata));
         public void AddErrors(IEnumerable<Error> errors)
         {
             foreach (var error in errors)

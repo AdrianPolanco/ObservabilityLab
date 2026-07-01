@@ -53,7 +53,9 @@ internal class OrderProcessedMessageHandler(
 
         if (invoiceDto is null)
             return Result<OrderProcessed>.Failure(
-                new Error("OrderNotFound", $"Order {message.OrderId} not found while building invoice."));
+                new Error("OrderNotFound", $"Order {message.OrderId} not found while building invoice.", new() {
+                    { "OrderId", message.OrderId }
+                }));
 
         var pdfBytes = pdfGenerator.Generate(invoiceDto);
 
@@ -63,7 +65,10 @@ internal class OrderProcessedMessageHandler(
 
         if (!isSuccess)
             return Result<OrderProcessed>.Failure(
-                new Error("InvoiceUploadFailed", $"Failed to upload invoice PDF for order {message.OrderId}."));
+                new Error("InvoiceUploadFailed", $"Failed to upload invoice PDF for order {message.OrderId}.", new() {
+                    { "OrderId", message.OrderId },
+                    { "ObjectName", objectName }
+                }));
 
         logger.LogInformation(
             "Uploaded invoice PDF for order {OrderId} as {ObjectName}.",
@@ -90,7 +95,10 @@ internal class OrderProcessedMessageHandler(
 
         if (!published)
         {
-            return Result<OrderProcessed>.Failure(new Error("InvoiceMessageUnpublished", $"The invoice generation for {invoice.Id} could not be published."));
+            return Result<OrderProcessed>.Failure(new Error("InvoiceMessageUnpublished", $"The invoice generation for {invoice.Id} could not be published.", new() {
+                { "InvoiceId", invoice.Id },
+                { "OrderId", invoiceDto.Order.Id }
+            }));
         }
 
         return Result<OrderProcessed>.Success(message);

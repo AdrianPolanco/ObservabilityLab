@@ -18,15 +18,19 @@ namespace ObservabilityLab.Shared.Entities
             var errors = new List<Error>();
 
             if(stockQuantity < 0) { 
-                errors.Add(new("StockQuantityNegative", "Stock quantity cannot be negative."));
+                errors.Add(new("StockQuantityNegative", "Stock quantity cannot be negative.", new() {
+                    { "Name", name},
+                    {"StockQuantity", stockQuantity},
+                    {"Price", price}
+                }));
             }
 
             if(price < 0) { 
-                errors.Add(new("PriceNegative", "Price cannot be negative."));
+                errors.Add(new("PriceNegative", "Price cannot be negative.", new(){{"Price", price}}));
             }
 
             if(string.IsNullOrWhiteSpace(name)) {
-                errors.Add(new("EmptyProductName", "Product name cannot be empty."));
+                errors.Add(new("EmptyProductName", "Product name cannot be empty.", new(){{"Name", name}}));
             }
 
             if(errors.Any()) {
@@ -44,13 +48,18 @@ namespace ObservabilityLab.Shared.Entities
 
             if(requestedQuantity <= 0)
             {
-                errors.Add(new("InvalidRequestedQuantity", $"You cannot add {requestedQuantity} existences to the order, add 1 existence or more."));
+                errors.Add(new("InvalidRequestedQuantity", $"You cannot add {requestedQuantity} existences to the order, add 1 existence or more.", new() {
+                    { "RequestedQuantity", requestedQuantity }
+                }));
             }
 
             var isAvailable = CheckStock(requestedQuantity);
 
             if(!isAvailable) {
-                errors.Add(new("NotEnoughStock", $"There aren't enough existences: You requested {requestedQuantity} existence, but there are only {StockQuantity} existences of this item."));
+                errors.Add(new("NotEnoughStock", $"There aren't enough existences: You requested {requestedQuantity} existence, but there are only {StockQuantity} existences of this item.", new() {
+                    { "RequestedQuantity", requestedQuantity },
+                    { "StockQuantity", StockQuantity }
+                }));
             }
 
             if(errors.Any()) {

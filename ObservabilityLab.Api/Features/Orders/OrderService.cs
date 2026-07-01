@@ -6,76 +6,91 @@ using ObservabilityLab.Shared.Messaging;
 using ObservabilityLab.Shared.Messaging.Constants;
 using ObservabilityLab.Shared.Messaging.Contracts;
 using ObservabilityLab.Shared.Results;
+using Serilog.Context;
 using static ObservabilityLab.Api.Features.Orders.Get.GetOrder;
 
 namespace ObservabilityLab.Api.Features.Orders
 {
-    internal class OrderService(ApplicationDbContext dbContext, RabbitMqPublisher publisher)
+    internal class OrderService(ApplicationDbContext dbContext, RabbitMqPublisher publisher, ILogger<OrderService> logger)
     {
         public async Task<Result<Order>> CreateAsync(Guid customerId, List<(Guid productId, int quantity)> products, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            var errors = new List<Error>();
+            using (LogContext.PushProperty("CustomerId", customerId)){
+                logger.LogInformation("Creating order for customer {CustomerId} with items: {@Products}", customerId, products);
+                cancellationToken.ThrowIfCancellationRequested();
+                var errors = new List<Error>();
 
-            var doesCustomerExist = await dbContext.Customers.AnyAsync(c => c.Id.Equals(customerId), cancellationToken);
+                var doesCustomerExist = await dbContext.Customers.AnyAsync(c => c.Id.Equals(customerId), cancellationToken);
 
-            if (!doesCustomerExist)
-            {
-                errors.Add(new(ErrorCodes.CustomerDoesNotExist, $"The customer with id {customerId} does not exist."));
-                return Result<Order>.Failures(errors);
+                if (!doesCustomerExist)
+                {
+                    errors.Add(new(ErrorCodes.CustomerDoesNotExist, $"The customer with id {customerId} does not exist.", new() {
+                        { "CustomerId", customerId }
+                    }));
+                    var result = Result<Order>.Failures(errors);
+                    logger.LogInformation("Validation failed: {@Result}", result);
+                    return result;
+                }
+
+                var productIds = products.Select(p => p.productId).Distinct().ToList();
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var foundProducts = await dbContext.Products
+                    .Where(p => productIds.Contains(p.Id))
+                    .ToDictionaryAsync(p => p.Id, cancellationToken);
+
+                foreach (var productId in productIds)
+                {
+                    if (!foundProducts.ContainsKey(productId))
+                        errors.Add(new(ErrorCodes.ProductDoesNotExist,
+                            $"The product with id {productId} does not exist.", new() {
+                                { "ProductId", productId }
+                            }));
+                }
+
+                if (errors.Count != 0){
+                    var result = Result<Order>.Failures(errors);
+                    logger.LogInformation("Validation failed: {@Result}", result);
+                    return result;
+                }
+
+                var orderLines = products
+                    .Select(p => (Product: foundProducts[p.productId], p.quantity))
+                    .ToList();
+
+                var orderResult = Order.Create(customerId);
+                if (!orderResult.IsSuccess){
+                    logger.LogInformation("Validation failed: {@OrderResult}", orderResult);
+                    return orderResult;
+                }
+
+                var order = orderResult.Data!;
+
+                foreach (var (product, quantity) in orderLines)
+                {
+                    // AddItem reduces the tracked product's stock AND appends the OrderItem to order._items.
+                    // On failure (e.g. NotEnoughStock) the stock is NOT mutated and the item is NOT appended.
+                    var addItemResult = order.AddItem(product, quantity);
+                    if (!addItemResult.IsSuccess)
+                        errors.AddRange(addItemResult.Errors);
+                }
+
+                if (errors.Count != 0)
+                    return Result<Order>.Failures(errors); // DbContext is request-scoped; in-memory mutations are discarded
+
+                cancellationToken.ThrowIfCancellationRequested();
+                dbContext.Orders.Add(order);
+                cancellationToken.ThrowIfCancellationRequested();
+                await dbContext.SaveChangesAsync(cancellationToken); // one transaction: product UPDATEs + order INSERT + order_item INSERTs
+                await publisher.PublishAsync(
+                    MessagingConstants.Exchanges.OrderEvents,
+                    MessagingConstants.RoutingKeys.OrderCreated,
+                    new OrderCreated(order.Id, order.CustomerId, DateTime.UtcNow),
+                    cancellationToken);
+
+                    return Result<Order>.Success(order);
             }
-
-            var productIds = products.Select(p => p.productId).Distinct().ToList();
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var foundProducts = await dbContext.Products
-                .Where(p => productIds.Contains(p.Id))
-                .ToDictionaryAsync(p => p.Id, cancellationToken);
-
-            foreach (var productId in productIds)
-            {
-                if (!foundProducts.ContainsKey(productId))
-                    errors.Add(new(ErrorCodes.ProductDoesNotExist,
-                        $"The product with id {productId} does not exist."));
-            }
-
-            if (errors.Count != 0)
-                return Result<Order>.Failures(errors);
-
-            var orderLines = products
-                .Select(p => (Product: foundProducts[p.productId], p.quantity))
-                .ToList();
-
-            var orderResult = Order.Create(customerId);
-            if (!orderResult.IsSuccess)
-                return orderResult;
-
-            var order = orderResult.Data!;
-
-            foreach (var (product, quantity) in orderLines)
-            {
-                // AddItem reduces the tracked product's stock AND appends the OrderItem to order._items.
-                // On failure (e.g. NotEnoughStock) the stock is NOT mutated and the item is NOT appended.
-                var addItemResult = order.AddItem(product, quantity);
-                if (!addItemResult.IsSuccess)
-                    errors.AddRange(addItemResult.Errors);
-            }
-
-            if (errors.Count != 0)
-                return Result<Order>.Failures(errors); // DbContext is request-scoped; in-memory mutations are discarded
-
-            cancellationToken.ThrowIfCancellationRequested();
-            dbContext.Orders.Add(order);
-            cancellationToken.ThrowIfCancellationRequested();
-            await dbContext.SaveChangesAsync(cancellationToken); // one transaction: product UPDATEs + order INSERT + order_item INSERTs
-            await publisher.PublishAsync(
-                MessagingConstants.Exchanges.OrderEvents,
-                MessagingConstants.RoutingKeys.OrderCreated,
-                new OrderCreated(order.Id, order.CustomerId, DateTime.UtcNow),
-                cancellationToken);
-
-            return Result<Order>.Success(order);
         }
 
         public async Task<Result<OrderDto>> GetOrderAsync(Guid orderId, CancellationToken cancellationToken)
@@ -102,7 +117,9 @@ namespace ObservabilityLab.Api.Features.Orders
 
             if (dto is null)
                 return Result<OrderDto>.Failure(
-                    new Error(ErrorCodes.OrderDoesNotExist, $"The order with id {orderId} does not exist."));
+                    new Error(ErrorCodes.OrderDoesNotExist, $"The order with id {orderId} does not exist.", new() {
+                        { "OrderId", orderId }
+                    }));
 
             return Result<OrderDto>.Success(dto);
         }

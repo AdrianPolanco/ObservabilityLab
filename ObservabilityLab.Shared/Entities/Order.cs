@@ -19,7 +19,9 @@ namespace ObservabilityLab.Shared.Entities
 
             if(customerId == Guid.Empty)
             {
-                errors.Add(new Error("InvalidCustomerId", "Customer ID must be a valid GUID."));
+                errors.Add(new Error("InvalidCustomerId", "Customer ID must be a valid GUID.", new() {
+                    { "CustomerId", customerId }
+                }));
             }
 
             if (errors.Any())
@@ -45,6 +47,7 @@ namespace ObservabilityLab.Shared.Entities
             if(product == null)
             {
                 errors.Add(new Error("InvalidProduct", "Product must be a valid instance."));
+                return Result<OrderItem>.Failures(errors);
             }
 
             var reduceStockResult = product.ReduceStock(quantity);
@@ -77,7 +80,10 @@ namespace ObservabilityLab.Shared.Entities
 
             if(Status == OrderStatus.Processed && newStatus == OrderStatus.Pending)
             {
-                errors.Add(new Error("InvalidStatusTransition", "Cannot transition from Processed to Pending."));
+                errors.Add(new Error("InvalidStatusTransition", "Cannot transition from Processed to Pending.", new() {
+                    { "CurrentStatus", Status },
+                    { "RequestedStatus", newStatus }
+                }));
             }
 
             if (errors.Any())
@@ -95,7 +101,9 @@ namespace ObservabilityLab.Shared.Entities
 
             if (!Items.Any())
             {
-                errors.Add(new Error("EmptyItems", "Order must contain at least one item."));
+                errors.Add(new Error("EmptyItems", "Order must contain at least one item.", new() {
+                    { "OrderId", Id }
+                }));
             }
 
             if (errors.Any())

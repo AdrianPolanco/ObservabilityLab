@@ -31,7 +31,9 @@ namespace ObservabilityLab.OrderProcessingWorker.Services
 
             if (!published)
             {
-                return Result<OrderCreated>.Failure(new Error("ProcessedOrderUnpublished", $"The order {order.Id} publishing failed"));
+                return Result<OrderCreated>.Failure(new Error("ProcessedOrderUnpublished", $"The order {order.Id} publishing failed", new() {
+                    { "OrderId", order.Id }
+                }));
             }
 
             return Result<OrderCreated>.Success(message);
