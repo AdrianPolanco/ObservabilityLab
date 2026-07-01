@@ -25,7 +25,7 @@ try
     builder.Services.AddSharedServices();
     builder.Services.AddScoped<EmailSender>();
     builder.Services.AddRabbitMqConsumer<InvoiceGenerated, InvoiceGeneratedMessageHandler>(RabbitMqTopology.Queues.EmailWorker);
-    builder.Services.AddObservability(builder.Configuration);
+    builder.Services.AddObservability(builder.Configuration, "ObservabilityLab.EmailWorker");
 
     var host = builder.Build();
 
