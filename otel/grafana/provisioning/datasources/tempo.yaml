@@ -13,18 +13,17 @@ datasources:
     isDefault: true
     jsonData:
       tracesToLogsV2:
-        # Lets you jump from a span straight to its correlated log lines once a Loki/log
-        # datasource is added later. Left pointing at Tempo itself for now (no-op) since
-        # this lab has no log datasource wired into Grafana yet — logs are inspected via
-        # the collector's debug exporter / Serilog file sink.
-        datasourceUid: tempo
+        # Lets you jump from a span straight to its correlated log lines in Loki
+        # (see datasources/loki.yaml). Matches on trace/span ID within the shifted
+        # time window below.
+        datasourceUid: loki
         spanStartTimeShift: "-1m"
         spanEndTimeShift: "1m"
-        filterByTraceID: false
-        filterBySpanID: false
+        filterByTraceID: true
+        filterBySpanID: true
       nodeGraph:
         enabled: true
       search:
         hide: false
       lokiSearch:
-        datasourceUid: tempo
+        datasourceUid: loki

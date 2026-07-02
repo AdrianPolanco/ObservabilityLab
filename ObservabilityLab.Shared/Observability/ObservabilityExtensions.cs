@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Exporter;
@@ -55,6 +56,7 @@ namespace ObservabilityLab.Shared.Observability
                         // Auto-instrumentation: EF Core ships its own ActivitySource internally; this just
                         // turns it on, giving a Client span per SQL command with zero hand-written code.
                         .AddEntityFrameworkCoreInstrumentation()
+                        .AddNpgsql()
                         // Auto-instrumentation: every outbound HttpClient call (e.g. the MinIO SDK, which is
                         // itself built on HttpClient) becomes a Client span for free.
                         .AddHttpClientInstrumentation();

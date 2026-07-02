@@ -1,0 +1,30 @@
+server:
+  http_listen_address: 0.0.0.0
+  http_listen_port: 3100
+
+auth_enabled: false
+
+schema_config:
+  configs:
+    - from: 2026-06-01
+      store: tsdb
+      object_store: s3
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+common:
+  path_prefix: /loki
+  compactor_address: http://localhost:3100
+  storage:
+    s3:
+      endpoint: minio:9000
+      insecure: true
+      bucketnames: loki-logs
+      access_key_id: observability
+      secret_access_key: observability
+      s3forcepathstyle: true
+
+compactor:
+  working_directory: /loki/compactor

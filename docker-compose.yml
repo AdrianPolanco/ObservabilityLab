@@ -93,6 +93,36 @@ services:
     networks:
       - observability-lab-network
 
+  createbuckets:
+    image: minio/mc:latest
+    container_name: observability-lab-createbuckets
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 observability observability &&
+      mc mb --ignore-existing local/loki-logs;
+      exit 0;
+      "
+    networks:
+      - observability-lab-network
+
+  loki:
+    image: grafana/loki:latest
+    container_name: observability-lab-loki
+    command: [ "-config.file=/etc/loki/loki.yaml" ]
+    volumes:
+      - ./otel/loki.yaml:/etc/loki/loki.yaml
+      - loki_data:/loki
+    ports:
+      - "3100:3100"     # Loki HTTP API (push/query)
+    networks:
+      - observability-lab-network
+    depends_on:
+      - tempo
+      - createbuckets
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: observability-lab-otel-collector
@@ -104,6 +134,7 @@ services:
       - "4318:4318"     # OTLP HTTP (apps export here)
     depends_on:
       - tempo
+      - loki
     networks:
       - observability-lab-network
 
@@ -131,6 +162,7 @@ volumes:
   minio_data:
   tempo_data:
   grafana_data:
+  loki_data:
 
 networks:
   observability-lab-network:
