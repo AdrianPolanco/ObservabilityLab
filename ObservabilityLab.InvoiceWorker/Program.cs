@@ -23,7 +23,7 @@ try
     builder.Services.AddSharedServices();
     builder.Services.AddSingleton<IInvoicePdfGenerator, InvoicePdfGenerator>();
     builder.Services.AddRabbitMqConsumer<OrderProcessed, OrderProcessedMessageHandler>(RabbitMqTopology.Queues.InvoiceWorker);
-    builder.Services.AddObservability(builder.Configuration);
+    builder.Services.AddObservability(builder.Configuration, "ObservabilityLab.InvoiceWorker");
 
     var host = builder.Build();
 

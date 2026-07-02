@@ -14,7 +14,7 @@ try
     builder.Services.AddOpenApi();
     builder.Services.AddSharedDatabase(builder.Configuration).AddServices();
     builder.Services.AddSharedMessaging(builder.Configuration);
-    builder.Services.AddObservability(builder.Configuration);
+    builder.Services.AddObservability(builder.Configuration, "ObservabilityLab.Api", addAspNetCoreInstrumentation: true);
 
     var app = builder.Build();
 
@@ -31,7 +31,7 @@ try
         app.MapOpenApi();
     }
 
-    app.UseSerilogRequestLogging();
+    app.UseRequestLogging();
     app.UseHttpsRedirection();
 
     app.MapOrderEndpoints();

@@ -1,6 +1,7 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Diagnostics;
 
 namespace ObservabilityLab.InvoiceWorker.Services;
 
@@ -9,10 +10,28 @@ internal interface IInvoicePdfGenerator
     byte[] Generate(InvoiceDto invoice);
 }
 
-internal sealed class InvoicePdfGenerator : IInvoicePdfGenerator
+internal sealed class InvoicePdfGenerator(ILogger<InvoicePdfGenerator> logger, ActivitySource activitySource): IInvoicePdfGenerator
 {
-    public byte[] Generate(InvoiceDto invoice) =>
-        Document.Create(container =>
+    public byte[] Generate(InvoiceDto invoice) {
+        // A CPU-bound step (QuestPDF layout + rendering) is still worth its own span: it shows up as
+        // wall-clock time on the waterfall alongside the I/O spans, which is exactly what you want when
+        // diagnosing "why did this message take 400ms to process" — was it the DB, the render, or the
+        // network call to MinIO?
+        using var generateSpan = activitySource.StartActivity("Generate Invoice PDF", ActivityKind.Internal);
+        generateSpan?.SetTag("invoice.order_id", invoice.Order.Id);
+        generateSpan?.SetTag("invoice.item_count", invoice.Items.Count);
+
+        logger.LogInformation("Generating PDF for invoice {InvoiceId} of order {OrderId}, Email: {CustomerEmail}", invoice.Order.Id, invoice.Order.Id, invoice.CustomerEmail);
+        var pdfBytes = GeneratePdfDocument(invoice);
+
+        generateSpan?.SetTag("invoice.pdf_size_bytes", pdfBytes.Length);
+        generateSpan?.SetStatus(ActivityStatusCode.Ok);
+        return pdfBytes;
+    }
+
+    private static byte[] GeneratePdfDocument(InvoiceDto invoice)
+    {
+        return Document.Create(container =>
         {
             container.Page(page =>
             {
@@ -85,4 +104,5 @@ internal sealed class InvoicePdfGenerator : IInvoicePdfGenerator
                 });
             });
         }).GeneratePdf();
+    }
 }

@@ -6,6 +6,7 @@ using ObservabilityLab.Shared.Messaging;
 using ObservabilityLab.Shared.Messaging.Contracts;
 using ObservabilityLab.Shared.Results;
 using ObservabilityLab.Shared.Services;
+using System.Diagnostics;
 using static ObservabilityLab.Shared.Messaging.Constants.MessagingConstants;
 
 namespace ObservabilityLab.InvoiceWorker.Services;
@@ -25,10 +26,18 @@ internal class OrderProcessedMessageHandler(
     RabbitMqPublisher publisher,
     IInvoicePdfGenerator pdfGenerator,
     MinIOService minioService,
-    ILogger<OrderProcessedMessageHandler> logger) : IMessageHandler<OrderProcessed>
+    ILogger<OrderProcessedMessageHandler> logger,
+    ActivitySource activitySource) : IMessageHandler<OrderProcessed>
 {
     public async Task<Result<OrderProcessed>> HandleAsync(OrderProcessed message, CancellationToken cancellationToken)
     {
+        // Nests under the "Consume invoice-worker" Consumer span opened by RabbitMqConsumer<TMessage>,
+        // which itself is a child of the OrderProcessingWorker's "Publish Message" span — same trace,
+        // third service.
+        using var processSpan = activitySource.StartActivity("Process OrderProcessed", ActivityKind.Internal);
+        processSpan?.SetTag("order.id", message.OrderId);
+        processSpan?.SetTag("order.total_amount", message.TotalAmount);
+
         logger.LogInformation("Processing OrderProcessed event for order {OrderId}.", message.OrderId);
 
         // Single round-trip: join orders → customers and project items+products inline.
@@ -56,21 +65,27 @@ internal class OrderProcessedMessageHandler(
         if (invoiceDto is null)
         {
             logger.LogWarning("Order {OrderId} not found while building invoice.", message.OrderId);
+            processSpan?.SetStatus(ActivityStatusCode.Error, "Order not found while building invoice");
             return Result<OrderProcessed>.Failure(
                 new Error("OrderNotFound", $"Order {message.OrderId} not found while building invoice.", new() {
                     { "OrderId", message.OrderId }
                 }));
         }
 
+        // pdfGenerator.Generate opens its own "Generate Invoice PDF" Internal span (see
+        // InvoicePdfGenerator) — nests one level deeper under processSpan.
         var pdfBytes = pdfGenerator.Generate(invoiceDto);
 
         var objectName = $"{message.OrderId}.pdf";
+        // minioService.UploadAsync's HTTP call to MinIO is captured automatically as a Client span by
+        // OpenTelemetry.Instrumentation.Http (registered in ObservabilityExtensions) — no manual span needed.
         var (isSuccess, _) = await minioService.UploadAsync(
             objectName, pdfBytes, MinIOConstants.Buckets.Invoices, "application/pdf", cancellationToken);
 
         if (!isSuccess)
         {
             logger.LogWarning("Failed to upload invoice PDF for order {OrderId} as {ObjectName}.", message.OrderId, objectName);
+            processSpan?.SetStatus(ActivityStatusCode.Error, "Invoice PDF upload failed");
             return Result<OrderProcessed>.Failure(
                 new Error("InvoiceUploadFailed", $"Failed to upload invoice PDF for order {message.OrderId}.", new() {
                     { "OrderId", message.OrderId },
@@ -78,6 +93,7 @@ internal class OrderProcessedMessageHandler(
                 }));
         }
 
+        processSpan?.AddEvent(new ActivityEvent("Invoice PDF uploaded", tags: new ActivityTagsCollection { { "object_name", objectName } }));
         logger.LogInformation(
             "Uploaded invoice PDF for order {OrderId} as {ObjectName}.",
             message.OrderId, objectName);
@@ -87,10 +103,12 @@ internal class OrderProcessedMessageHandler(
         if (invoiceResult.Errors.Any())
         {
             logger.LogWarning("Invoice validation failed for order {OrderId}: {@Errors}", message.OrderId, invoiceResult.Errors);
+            processSpan?.SetStatus(ActivityStatusCode.Error, "Invoice validation failed");
             return Result<OrderProcessed>.Failures(invoiceResult.Errors.ToList());
         }
 
         var invoice = invoiceResult.Data;
+        processSpan?.SetTag("invoice.id", invoice.Id);
 
         await dbContext.Invoices.AddAsync(invoice, cancellationToken);
         await dbContext.Orders.Where(o => o.Id == message.OrderId).ExecuteUpdateAsync(o => o.SetProperty(o => o.Status, OrderStatus.Invoiced), cancellationToken);
@@ -105,6 +123,7 @@ internal class OrderProcessedMessageHandler(
         if (!published)
         {
             logger.LogWarning("Failed to publish InvoiceGenerated event for invoice {InvoiceId} (order {OrderId}).", invoice.Id, invoiceDto.Order.Id);
+            processSpan?.SetStatus(ActivityStatusCode.Error, "InvoiceGenerated publish failed");
             return Result<OrderProcessed>.Failure(new Error("InvoiceMessageUnpublished", $"The invoice generation for {invoice.Id} could not be published.", new() {
                 { "InvoiceId", invoice.Id },
                 { "OrderId", invoiceDto.Order.Id }
@@ -112,6 +131,7 @@ internal class OrderProcessedMessageHandler(
         }
 
         logger.LogInformation("Invoice {InvoiceId} generated and InvoiceGenerated event published for order {OrderId}.", invoice.Id, invoiceDto.Order.Id);
+        processSpan?.SetStatus(ActivityStatusCode.Ok);
 
         return Result<OrderProcessed>.Success(message);
     }

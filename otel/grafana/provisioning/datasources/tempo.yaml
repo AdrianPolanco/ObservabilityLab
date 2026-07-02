@@ -1,0 +1,30 @@
+# Grafana datasource provisioning: auto-registers Tempo on container start,
+# so there is no manual "Add data source" click-through.
+# Grafana reads FROM Tempo's query API (:3200) — it never talks to the OTel Collector;
+# the collector's only job is receiving OTLP from the apps and forwarding to Tempo's OTLP receiver (:4317, in-network only).
+apiVersion: 1
+
+datasources:
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    uid: tempo
+    isDefault: true
+    jsonData:
+      tracesToLogsV2:
+        # Lets you jump from a span straight to its correlated log lines once a Loki/log
+        # datasource is added later. Left pointing at Tempo itself for now (no-op) since
+        # this lab has no log datasource wired into Grafana yet — logs are inspected via
+        # the collector's debug exporter / Serilog file sink.
+        datasourceUid: tempo
+        spanStartTimeShift: "-1m"
+        spanEndTimeShift: "1m"
+        filterByTraceID: false
+        filterBySpanID: false
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      lokiSearch:
+        datasourceUid: tempo

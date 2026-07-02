@@ -16,7 +16,7 @@ try
     builder.Services.AddSharedDatabase(builder.Configuration);
     builder.Services.AddSharedMessaging(builder.Configuration);
     builder.Services.AddRabbitMqConsumer<OrderCreated, OrderCreatedMessageHandler>(RabbitMqTopology.Queues.OrderProcessingWorker);
-    builder.Services.AddObservability(builder.Configuration);
+    builder.Services.AddObservability(builder.Configuration, "ObservabilityLab.OrderProcessingWorker");
 
     var host = builder.Build();
 

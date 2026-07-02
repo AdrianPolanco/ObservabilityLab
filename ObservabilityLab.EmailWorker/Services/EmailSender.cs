@@ -4,10 +4,11 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using ObservabilityLab.EmailWorker.Options;
+using System.Diagnostics;
 
 namespace ObservabilityLab.EmailWorker.Services
 {
-    internal class EmailSender(IOptionsMonitor<SmtpOptions> optionsMonitor, ILogger<EmailSender> logger)
+    internal class EmailSender(IOptionsMonitor<SmtpOptions> optionsMonitor, ILogger<EmailSender> logger, ActivitySource activitySource)
     {
         public async Task<bool> SendEmailAsync(string to, string subject, string fileName, byte[] fileBytes, CancellationToken cancellationToken)
         {
@@ -23,6 +24,15 @@ namespace ObservabilityLab.EmailWorker.Services
             email.Body = body.ToMessageBody();
 
             var options = optionsMonitor.CurrentValue;
+
+            // MailKit talks raw SMTP over a socket — it doesn't go through HttpClient, so
+            // OpenTelemetry.Instrumentation.Http never sees it. This is the case for a hand-written
+            // Client span: an outbound call to a dependency the auto-instrumentation can't reach.
+            // net.peer.* are the OTel semantic-convention names for "what remote host/port did we call".
+            using var smtpSpan = activitySource.StartActivity("SMTP send", ActivityKind.Client);
+            smtpSpan?.SetTag("net.peer.name", options.SmtpServer);
+            smtpSpan?.SetTag("net.peer.port", options.Port);
+            smtpSpan?.SetTag("messaging.destination", to);
 
             try
             {
@@ -42,10 +52,13 @@ namespace ObservabilityLab.EmailWorker.Services
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to send email to {Destination} via {SmtpServer}:{Port}.", to, options.SmtpServer, options.Port);
+                smtpSpan?.AddException(ex);
+                smtpSpan?.SetStatus(ActivityStatusCode.Error, ex.Message);
                 throw;
             }
 
             logger.LogInformation("Email sent successfully to {Destination}", to);
+            smtpSpan?.SetStatus(ActivityStatusCode.Ok);
 
             return true;
         }
